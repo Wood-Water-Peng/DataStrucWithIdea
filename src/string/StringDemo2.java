@@ -129,44 +129,35 @@ public class StringDemo2 {
     /**
      * target = 7, nums = [2,3,1,2,4,3]
      *
-     * @param arr
+     * @param arr    必须都为正数，否则无法用滑动窗口实现
      * @param target
      * @return [4, 3]
+     * 注意的点：
+     * 1.窗口左边界扩大的时机
+     * 2.窗口右边界扩大的时机
      */
     public int minSubArrayLen(int[] arr, int target) {
         //嗅探指针起点
         int start = 0;
         //嗅探指针终点
-        int end = -1;
-        //窗口起点
-        int ansL = -1;
-        //窗口终点
-        int ansR = end;
+        int end = 0;
         //窗口的长度
         int len = Integer.MAX_VALUE;
         int sum = 0;
         while (end < arr.length) {
             //如果累加值《
-            if (sum == target) {
-                if (end - start + 1 < len) {
-                    ansL = start;
-                    len=end-start+1;
-                    ansR = start + len;
-                }
+            sum += arr[end];
+            while (sum > target) {
+                //
                 sum -= arr[start];
-                ++start;
-            } else if (sum < target) {
-                ++end;
-                if (end < arr.length) {
-                    sum += arr[end];
-                }
-            } else {
-                sum -= arr[start];
-                ++start;
-
+                start++;
             }
+            if (sum == target) {
+                len = Math.min(len, (end - start + 1));
+            }
+            end++;
         }
-        return ansR - ansL + 1;
+        return len == Integer.MAX_VALUE ? 0 : len;
     }
 
     //最小区间 https://leetcode-cn.com/problems/smallest-range/
