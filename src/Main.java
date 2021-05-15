@@ -1,6 +1,11 @@
+import arr.ArrDemo;
+import linkList.LinkListDemo;
+import linkList.Node;
+import linkList.NodeUtil;
 import recursive.RecursiveDemo;
 import sort.SortDemo;
 import sort.SortDemo2;
+import sort.SortDemo3;
 import stack.StackDemo;
 import string.StringDemo;
 import string.StringDemo2;
@@ -31,19 +36,34 @@ public class Main {
 //        stringDemo2.maxNoDuplicatesSubString("aabaa");
 //        stringDemo2.minCoverSubString("abca", "abc");
 //        stringDemo2.minSubArrayLen(new int[]{2, 3, 1, 2}, 3);
-        int[] arr = {20,13,6, 21,21,9,10, 5,21};
+        int[] arr = {3,5,2,1,4,6,7};
 //        SortDemo sortDemo = new SortDemo();
 //        sortDemo.quickSort(arr);
 //        sortDemo.binarySearch(arr,21);
 
-        SortDemo2 sortDemo2 = new SortDemo2();
+        SortDemo3 sortDemo3 = new SortDemo3();
 //        sortDemo2.mergeSort(arr);
-        sortDemo2.quickSort(arr);
-        sortDemo2.binarySearch(arr,21);
+//        sortDemo3.mergeSort(arr);
+//        sortDemo2.binarySearch(arr,21);
+        sortDemo3.quickSort(arr);
+//        sortDemo3.binarySearch(arr, 21);
 
         StackDemo stackDemo = new StackDemo();
-//        stackDemo.baseCalc("(10+(4+5+2)-3)+(6+8)");
-        stackDemo.baseCalc2("3+2*2/2");
+//        stackDemo.baseCalc2("(10-(4-5-2)-3)+(6+8)");
+//        stackDemo.baseCalc3(" 2+3 *2/ 2-1 ");
+//        stackDemo.baseCalc(" 3 +5 -2+ 1 ");
+
+        ArrDemo arrDemo = new ArrDemo();
+//        arrDemo.sortColors2(new int[]{2,0,2,2,2,2,0,1});
+
+        LinkListDemo linkListDemo = new LinkListDemo();
+        Node header = NodeUtil.createLinkList(arr);
+        NodeUtil.printLinkList(header);
+
+        Node node_3 = NodeUtil.getNode(header, 2);
+        Node node_6 = NodeUtil.getNode(header, 7);
+        linkListDemo.reverseLinkList(header,node_3,node_6);
+//        linkListDemo.reverseLinkList(header);
     }
 
 }

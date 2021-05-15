@@ -13,97 +13,164 @@ public class StackDemo {
      * https://leetcode-cn.com/problems/basic-calculator/
      * <p>
      * 由数字、'+'、'-'、'('、')'、和 ' ' 组成
-     * 输入：s = "(10+(4+5+2)-3)+(6+8)"
+     * 输入：s = "(10-(4-5+2)-3)+(6+8)"
      * 输出：32
+     * <p>
+     * 栈里面只保存操作符
+     * 思路：
+     * 1.什么时候计算？  数字结束的时候进行计算
+     * 2.什么时候压栈？
+     * <p>
+     * 计算时的操作符由栈顶的操作符和上一个操作符决定
      */
 
-
-    public int baseCalc(String arr) {
-        int sign = 1;
+    public int baseCalc2(String str) {
         int sum = 0;
-        Deque<Integer> stack = new LinkedList<>();
-        stack.push(sign);
-        int i = 0;
-        while (i < arr.length()) {
-            if (arr.charAt(i) == ' ') {
-                i++;
-            } else if (arr.charAt(i) == '+') {
-                sign = stack.peek();
-                i++;
-            } else if (arr.charAt(i) == '-') {
-                sign = -stack.peek();
-                i++;
-            } else if (arr.charAt(i) - '0' >= 0 && arr.charAt(i) - '0' <= 9) {
-                //数字
-                long tmp = 0;
-                while (i < arr.length() && Character.isDigit(arr.charAt(i))) {
-                    tmp = tmp * 10 + (arr.charAt(i) - '0');
-                    i++;
+        Stack<Integer> ops = new Stack<>();
+        int preSign = 1;
+        ops.push(preSign);
+        int index = 0;
+        int cur = 0;
+        while (index < str.length()) {
+            char c = str.charAt(index);
+            if (isDigit(c)) {
+                while (index < str.length() && isDigit(str.charAt(index))) {
+                    cur = cur * 10 + str.charAt(index) - '0';
+                    index++;
                 }
-                sum += tmp * sign;
-            } else if (arr.charAt(i) == '(') {
-                stack.push(sign);
-                i++;
-            } else if (arr.charAt(i) == ')') {
-                stack.pop();
-                i++;
+            } else {
+                //计算
+                sum += cur * preSign;
+                //非数字
+                switch (c) {
+                    case '(':
+                        ops.push(preSign);
+                        break;
+                    case ')':
+                        ops.pop();
+                        break;
+                    case '+':
+                        preSign = ops.peek();
+                        break;
+                    case '-':
+                        preSign = -ops.peek();
+                        break;
+                }
+                cur = 0;
+                index++;
             }
+
+
         }
-        System.out.println("baseCalc result->" + sum);
         return sum;
     }
 
     /**
      * https://leetcode-cn.com/problems/basic-calculator-ii/
      *
-     * @param arr
+     * @param str
      * @return 减加乘除和数字
      * <p>
-     * 输入：s = " 3+5 / 2 "
+     * 输入：s = " 3+5 *2/ 2+1"
      * 输出：5
      * <p>
      * 思路:
-     * 1.先做乘除计算，将结果压栈，然后将栈中所有的元素求和
+     * 1.如果是数字，直接压栈(带上操作符)
+     * 2.在数字结束的时候，判断上一个操作符，如果是乘除计算，将结果压栈，然后将栈中所有的元素求和
      */
-    public int baseCalc2(String arr) {
-        char preSign = '+';
-        int i = 0;
-        int num = 0;
-        Stack<Integer> stack = new Stack<>();
-        while (i < arr.length()) {
-            char charAt = arr.charAt(i);
-            if (charAt - '0' >= 0 && charAt - '0' <= 9) {
-                num = num * 10 + charAt - '0';
-            }
 
-            if (charAt - '0' < 0 || charAt - '0' > 9) {
-                {
-                    switch (preSign) {
-                        case '+':
-                            stack.push(num);
-                            break;
-                        case '-':
-                            stack.push(-num);
-                            break;
-                        case '*':
-                            stack.push(stack.pop() * num);
-                            break;
-                        case '/':
-                            stack.push(stack.pop() / num);
-                            break;
-                    }
-                    preSign = charAt;
-                    num = 0;
+    public int baseCalc3(String str) {
+        int index = 0;
+        int sum = 0;
+        Stack<Integer> stack = new Stack<>();
+        char preOps = '+';
+        int cur = 0;
+        while (index < str.length()) {
+            char charAt = str.charAt(index);
+            if (charAt == ' ' && index < str.length()) {
+                index++;
+                continue;
+            }
+            if (isDigit(charAt)) {
+                while (index < str.length() && isDigit(str.charAt(index))) {
+                    cur = cur * 10 + str.charAt(index) - '0';
+                    index++;
                 }
             }
-            i++;
-        }
+            //执行计算
+            switch (preOps) {
+                case '+':
+                    stack.push(cur);
+                    break;
+                case '-':
+                    stack.push(-cur);
+                    break;
+                case '*':
+                    stack.push(stack.pop() * cur);
+                    break;
+                case '/':
+                    stack.push(stack.pop() / cur);
+                    break;
+            }
 
-        int sum = 0;
+            if (index < str.length()&&str.charAt(index)!=' ') {
+                preOps = str.charAt(index);
+                index++;
+                cur = 0;
+            }
+        }
         while (!stack.isEmpty()) {
             sum += stack.pop();
         }
-        System.out.println("baseCalc2 result->" + sum);
+
         return sum;
+    }
+
+    /**
+     * 只有加减和' '的计算器
+     *
+     * @param str
+     * @return 2+321-10
+     * <p>
+     * 不需要栈，直接根据运算符计算
+     */
+    public int baseCalc(String str) {
+        int sum = 0;
+        int index = 0;
+        int preSign = 1;
+        int cur = 0;
+        while (index < str.length()) {
+            char charAt = str.charAt(index);
+            if (charAt == ' ' && index < str.length()) {
+                index++;
+                continue;
+            }
+            if (isDigit(charAt)) {
+                //找出数字
+                while (index < str.length() && isDigit(str.charAt(index))) {
+                    cur = cur * 10 + str.charAt(index) - '0';
+                    index++;
+                }
+            }
+            sum += preSign * cur;
+            if (index == str.length()) {
+
+            } else {
+                charAt = str.charAt(index);
+                if (charAt == '+') {
+                    preSign = 1;
+                } else if (charAt == '-') {
+                    preSign = -1;
+                }
+                cur = 0;
+            }
+
+            index++;
+        }
+        return sum;
+    }
+
+    private boolean isDigit(char c) {
+        return (c - '0' >= 0 && c - '0' <= 9);
     }
 }
