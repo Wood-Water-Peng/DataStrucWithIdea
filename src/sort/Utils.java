@@ -1,3 +1,5 @@
+package sort;
+
 public class Utils {
     public static void printArr(int[] arr) {
         StringBuilder builder = new StringBuilder();
@@ -7,5 +9,6 @@ public class Utils {
             builder.append(',');
         }
         builder.append(']');
+        System.out.println("arr->" + builder.toString());
     }
 }
